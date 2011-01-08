@@ -30,9 +30,9 @@ public class InstrumentingTranslator extends ReferencingTranslator {
     private Set<JCTree.JCExpression> lvalues = 
         new HashSet<JCTree.JCExpression>();
     
-    public SimulationTranslator(PrecisionChecker checker,
-                                ProcessingEnvironment env,
-                                TreePath p) {
+    public InstrumentingTranslator(PrecisionChecker checker,
+                                   ProcessingEnvironment env,
+                                   TreePath p) {
         super(checker, env, p);
     }
     

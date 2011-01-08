@@ -13,7 +13,7 @@ import java.util.HashSet;
 
 import checkers.types.AnnotatedTypeMirror;
 
-// Tightly couples with the SimulationTranslator, this pass replaces all local
+// Tightly coupled with the SimulationTranslator, this pass replaces all local
 // variable references (and method parameters) with reference objects. This
 // allows us to simulate pass-by-reference for instrumentation of local variable
 // reads and writes.
@@ -35,23 +35,6 @@ public class ReferencingTranslator extends HelpfulTreeTranslator {
     protected Set<JCTree.JCStatement> constructorCalls = new
         HashSet<JCTree.JCStatement>();
     protected boolean skipIdents = false;
-    
-    // An *extremely hacky* way to make a few more trees behave approximately
-    // than are those that annotated by the atypeFactory. 
-    protected static Set<JCTree> approxTrees = new HashSet<JCTree>();
-    
-    protected boolean isApprox(JCTree tree) {
-        AnnotatedTypeMirror treeType = atypeFactory.getAnnotatedType(tree);
-        if (treeType.hasAnnotation(Approx.class)) {
-        	return true;
-        } else if (treeType.hasAnnotation(Context.class)) {
-        	return true; // TODO! This is totally wrong! Sorry --ALDS
-        } else if (approxTrees.contains(tree)) {
-        	return true;
-        } else {
-        	return false;
-        }
-    }
     
     // Generate a replacement variable definition for a given variable
     // declaration. If 'inited' is true, then the reference is given an
@@ -86,9 +69,6 @@ public class ReferencingTranslator extends HelpfulTreeTranslator {
             newType,
             tree.init
         );
-        
-        // Was the old variable approximate?
-        boolean approx = isApprox(tree);
         
         // Initialize with the value of the old variable.
         JCTree.JCExpression init;
