@@ -1,6 +1,7 @@
 package jill.rt;
 
 import java.lang.ref.PhantomReference;
+import checkers.types.AnnotatedTypeMirror;
 
 public interface Runtime {
 	/**
@@ -12,8 +13,8 @@ public interface Runtime {
   	 * @param preciseSize The precise memory (in bytes) used by the object.
   	 * @param approxSize The approximate memory used by the object.
 	 */
-	PhantomReference setApproximate(
-	    @Top Object o, boolean approx, boolean heap,
+	PhantomReference setType(
+	    Object o, TypeInfo type, boolean heap,
 	    int preciseSize, int approxSize
 	);
 
@@ -23,7 +24,7 @@ public interface Runtime {
 	 * @param o The object to test.
 	 * @return True, iff the referenced object is approximate.
 	 */
-	boolean isApproximate(@Top Object o);
+    AnnotatedTypeMirror getType(Object o);
 
 	/**
 	 * This method is called immediately before an object creation.
@@ -34,7 +35,7 @@ public interface Runtime {
  	 * @param preciseSize The precise memory (in bytes) used by the object.
  	 * @param approxSize The approximate memory used by the object.
 	 */
-	boolean beforeCreation(@Top Object creator, boolean approx,
+	boolean beforeCreation(Object creator, AnnotatedTypeMirror newType,
 	                       int preciseSize, int approxSize);
 	
 	/**
@@ -48,7 +49,7 @@ public interface Runtime {
 	 * 
 	 * @param created The newly created object.
 	 */
-	boolean enterConstructor(@Top Object created);
+	boolean enterConstructor(Object created);
 	
 	/**
 	 * If we instantiated a non-EPAj class, the top of the stack will be unchanged.
@@ -57,7 +58,7 @@ public interface Runtime {
 	 * @param creator The object that instantiated the new object.
 	 * @param created The newly created object.
 	 */
-	boolean afterCreation(@Top Object creator, @Top Object created);
+	boolean afterCreation(Object creator, Object created);
 	
 	/**
 	 * Wrap an object instantiation with the runtime system calls.
