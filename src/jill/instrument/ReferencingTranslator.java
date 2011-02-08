@@ -18,7 +18,7 @@ import checkers.types.AnnotatedTypeMirror;
 // allows us to simulate pass-by-reference for instrumentation of local variable
 // reads and writes.
 public class ReferencingTranslator extends HelpfulTreeTranslator {
-    public ReferencingTranslator(PrecisionChecker checker,
+    public ReferencingTranslator(InstrumentingChecker checker,
                                  ProcessingEnvironment env,
                                  TreePath p) {
         super(checker, env, p);
@@ -82,7 +82,6 @@ public class ReferencingTranslator extends HelpfulTreeTranslator {
             dotsExp(REFERENCE_CLASS),
             List.<JCTree.JCExpression>of(
                 init,
-                boolExp(approx),
                 boolExp(primitive)
             ),
             null

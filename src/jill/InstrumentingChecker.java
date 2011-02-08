@@ -1,6 +1,12 @@
 package jill;
 
 import jill.instrument.*;
+import checkers.basetype.BaseTypeChecker;
+import checkers.source.SupportedLintOptions;
+import checkers.quals.TypeQualifiers;
+import javax.lang.model.element.TypeElement;
+import com.sun.source.util.TreePath;
+import com.sun.tools.javac.tree.JCTree;
 
 /**
  * The checker class, which we here abuse to run our instrumentation code at the
