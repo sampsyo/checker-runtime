@@ -1,0 +1,7 @@
+#!/bin/sh
+jsr308jar=$JSR308/checkers/binary/jsr308-all.jar
+jilldir=`dirname $0`/..
+jilljar=$epajdir/build/jill.jar
+
+command="java -Xbootclasspath/a:$jsr308jar:$jilljar $*"
+exec $command

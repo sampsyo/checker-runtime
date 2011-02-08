@@ -1,0 +1,11 @@
+#!/bin/sh
+
+jsr308c="javac -J-Xbootclasspath/p:$JSR308/checkers/binary/jsr308-all.jar"
+
+jilldir=`dirname $0`/..
+jilljar=$jilldir/build/jill.jar
+jillchecker=jill.InstrumentingChecker
+
+command="$jsr308c -Xbootclasspath/a:$jilljar -processorpath $jilljar -processor
+$jillchecker $*"
+exec $command
