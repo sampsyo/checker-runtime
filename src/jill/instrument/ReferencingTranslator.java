@@ -24,7 +24,7 @@ public class ReferencingTranslator extends HelpfulTreeTranslator {
         super(checker, env, p);
     }
     
-    protected static final String REFERENCE_CLASS = "epaj.rt.Reference";
+    protected static final String REFERENCE_CLASS = "jill.rt.Reference";
     protected static final String VALUE_FIELD = "value";
     protected static final String SYM_SUFFIX = "__REF__";
     
