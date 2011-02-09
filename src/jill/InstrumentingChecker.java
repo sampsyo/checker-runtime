@@ -4,15 +4,31 @@ import jill.instrument.*;
 import checkers.basetype.BaseTypeChecker;
 import checkers.source.SupportedLintOptions;
 import checkers.quals.TypeQualifiers;
+import checkers.quals.TypeQualifier;
+import checkers.quals.SubtypeOf;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import java.lang.annotation.RetentionPolicy;
 import javax.lang.model.element.TypeElement;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.tree.JCTree;
+import java.lang.annotation.ElementType;
+
+// We're using a Checker class to insert our instrumentation pass, but we don't
+// really have any qualifiers we want to provide. Unfortunately, the Checker
+// Framework requires us to provide at least two annotations.
+@TypeQualifier
+@SubtypeOf({})
+@interface DummyQual1 { }
+@TypeQualifier
+@SubtypeOf({})
+@interface DummyQual2 { }
 
 /**
  * The checker class, which we here abuse to run our instrumentation code at the
  * appropriate time (i.e., after typing the program).
  */
-@TypeQualifiers({})
+@TypeQualifiers({DummyQual1.class, DummyQual2.class})
 @SupportedLintOptions({InstrumentingChecker.DEBUG})
 public class InstrumentingChecker extends BaseTypeChecker {
     public static final boolean DEBUG_DEFAULT = false;
@@ -42,3 +58,4 @@ public class InstrumentingChecker extends BaseTypeChecker {
         }
     }
 }
+
