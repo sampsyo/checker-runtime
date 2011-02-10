@@ -16,7 +16,6 @@ import com.sun.tools.javac.tree.JCTree;
 import java.lang.annotation.ElementType;
 import javax.annotation.processing.ProcessingEnvironment;
 import java.util.Map;
-import java.util.Set;
 
 // We're using a Checker class to insert our instrumentation pass, but we don't
 // really have any qualifiers we want to provide. Unfortunately, the Checker
@@ -42,6 +41,7 @@ public class InstrumentingChecker extends BaseTypeChecker {
     // translation.
     @Override
     public synchronized void init(ProcessingEnvironment env) {
+        super.init(env);
         Map<String, String> opts = env.getOptions();
         debug = opts.containsKey(DEBUG_FLAG);
     }
