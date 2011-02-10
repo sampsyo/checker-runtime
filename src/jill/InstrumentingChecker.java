@@ -9,10 +9,14 @@ import checkers.quals.SubtypeOf;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.annotation.RetentionPolicy;
+import javax.annotation.processing.SupportedOptions;
 import javax.lang.model.element.TypeElement;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.tree.JCTree;
 import java.lang.annotation.ElementType;
+import javax.annotation.processing.ProcessingEnvironment;
+import java.util.Map;
+import java.util.Set;
 
 // We're using a Checker class to insert our instrumentation pass, but we don't
 // really have any qualifiers we want to provide. Unfortunately, the Checker
@@ -29,20 +33,24 @@ import java.lang.annotation.ElementType;
  * appropriate time (i.e., after typing the program).
  */
 @TypeQualifiers({DummyQual1.class, DummyQual2.class})
-@SupportedLintOptions({InstrumentingChecker.DEBUG})
+@SupportedOptions({InstrumentingChecker.DEBUG_FLAG})
 public class InstrumentingChecker extends BaseTypeChecker {
-    public static final boolean DEBUG_DEFAULT = false;
-    public static final String DEBUG = "debug";
+    public static final String DEBUG_FLAG = "jilldbg";
+    public boolean debug = false;
 
-    public boolean debug() {
-        return getLintOption(DEBUG, DEBUG_DEFAULT);
+    // The -Ajilldbg flag prints out debugging information during source
+    // translation.
+    @Override
+    public synchronized void init(ProcessingEnvironment env) {
+        Map<String, String> opts = env.getOptions();
+        debug = opts.containsKey(DEBUG_FLAG);
     }
     
     @Override
     public void typeProcess(TypeElement e, TreePath p) {
         JCTree tree = (JCTree) p.getCompilationUnit(); // or maybe p.getLeaf()?
         
-        if (debug()) {
+        if (debug) {
             System.out.println("Translating from:");
             System.out.println(tree);
         }
@@ -52,7 +60,7 @@ public class InstrumentingChecker extends BaseTypeChecker {
 
         tree.accept(new InstrumentingTranslator(this, processingEnv, p));
 		
-        if (debug()) {
+        if (debug) {
             System.out.println("Translated to:");
             System.out.println(tree);
         }
