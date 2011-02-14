@@ -2,6 +2,7 @@
 jsr308jar=$JSR308/checkers/binary/jsr308-all.jar
 jilldir=`dirname $0`/..
 jilljar=$jilldir/build/jill.jar
+jxjar=$jilldir/build/jillexample.jar
 
-command="java -Xbootclasspath/a:$jsr308jar:$jilljar $*"
+command="java -Xbootclasspath/a:$jsr308jar:$jilljar:$jxjar $*"
 exec $command

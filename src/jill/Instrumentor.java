@@ -7,9 +7,6 @@ public class Instrumentor {
     protected InstrumentingTranslator translator;
     protected boolean debug;
 
-    public Instrumentor(boolean debug) {
-        this.debug = debug;
-    }
     public void beginInstrumentation(InstrumentingTranslator translator) {
         this.translator = translator;
     }

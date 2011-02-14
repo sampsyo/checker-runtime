@@ -26,12 +26,23 @@
         <jsr308.javac
             srcdir="${src.dir}"
             destdir="${classes.dir}"
-            classpath="${junit.jar}" />
+            classpath="${junit.jar}"
+            includes="jill/**" />
     </target>
     <target name="jar" depends="compile">
         <jar destfile="${jill.jar}">
-            <fileset dir="${classes.dir}" includes="**/*.class" />
-            <fileset dir="${src.dir}" includes="**/*.properties" />
+            <fileset dir="${classes.dir}" includes="jill/**/*.class" />
+        </jar>
+    </target>
+
+    <target name="example" depends="jar">
+        <jsr308.javac
+            srcdir="${src.dir}"
+            destdir="${classes.dir}"
+            classpath="${junit.jar}"
+            includes="jillexample/**" />
+        <jar destfile="${build.dir}/jillexample.jar">
+            <fileset dir="${classes.dir}" includes="jillexample/**/*.class" />
         </jar>
     </target>
     

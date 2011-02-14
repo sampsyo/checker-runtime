@@ -2,37 +2,22 @@ package jill;
 
 import jill.instrument.*;
 import checkers.basetype.BaseTypeChecker;
-import checkers.source.SupportedLintOptions;
-import checkers.quals.TypeQualifiers;
-import checkers.quals.TypeQualifier;
-import checkers.quals.SubtypeOf;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.annotation.RetentionPolicy;
-import javax.annotation.processing.SupportedOptions;
 import javax.lang.model.element.TypeElement;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.tree.JCTree;
 import java.lang.annotation.ElementType;
 import javax.annotation.processing.ProcessingEnvironment;
 import java.util.Map;
-
-// We're using a Checker class to insert our instrumentation pass, but we don't
-// really have any qualifiers we want to provide. Unfortunately, the Checker
-// Framework requires us to provide at least two annotations.
-@TypeQualifier
-@SubtypeOf({})
-@interface DummyQual1 { }
-@TypeQualifier
-@SubtypeOf({})
-@interface DummyQual2 { }
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * The checker class, which we here abuse to run our instrumentation code at the
  * appropriate time (i.e., after typing the program).
  */
-@TypeQualifiers({DummyQual1.class, DummyQual2.class})
-@SupportedOptions({InstrumentingChecker.DEBUG_FLAG})
 public class InstrumentingChecker extends BaseTypeChecker {
     public static final String DEBUG_FLAG = "jilldbg";
     public boolean debug = false;
@@ -45,7 +30,20 @@ public class InstrumentingChecker extends BaseTypeChecker {
         super.init(env);
         Map<String, String> opts = env.getOptions();
         debug = opts.containsKey(DEBUG_FLAG);
+
         instrumentor = getInstrumentor();
+        instrumentor.debug = debug;
+    }
+
+    // We manually add the debug flag command-line option rather than using the
+    // @SupportedOptions annotation because the annotation isn't inherited.
+    @Override
+    public Set<String> getSupportedOptions() {
+        Set<String> oldOptions = super.getSupportedOptions();
+        Set<String> newOptions = new HashSet<String>();
+        newOptions.addAll(oldOptions);
+        newOptions.add(DEBUG_FLAG);
+        return newOptions;
     }
     
     @Override
@@ -75,7 +73,7 @@ public class InstrumentingChecker extends BaseTypeChecker {
                                            instrumentor);
     }
     public Instrumentor getInstrumentor() {
-        return new Instrumentor(debug);
+        return new Instrumentor();
     }
 }
 
