@@ -48,7 +48,7 @@ import jill.InstrumentingChecker;
 // limited and finnicky, though, so the process is quite fragile.
 class HelpfulTreeTranslator extends TreeTranslator {
     protected Context context;
-    protected TreeMaker maker;
+    public TreeMaker maker;
     protected Names names;
     protected Enter enter;
     protected MemberEnter memberEnter;
@@ -90,7 +90,7 @@ class HelpfulTreeTranslator extends TreeTranslator {
     // Create an expression from a string consisting of "dot" accessess --
     // package/subpackage accesses, field accesses, etc.
     // For example: dotsExp("java.util.List")
-    protected JCTree.JCExpression dotsExp(String chain) {
+    public JCTree.JCExpression dotsExp(String chain) {
         String[] symbols = chain.split("\\.");
         JCTree.JCExpression node = maker.Ident(names.fromString(symbols[0]));
         for (int i = 1; i < symbols.length; i++) {
