@@ -21,17 +21,21 @@ import java.util.HashSet;
 import checkers.types.AnnotatedTypeMirror;
 
 import jill.InstrumentingChecker;
+import jill.Instrumentor;
 
 public class InstrumentingTranslator extends ReferencingTranslator {
     // Keeps track of expressions that should *not* be instrumented as rvalues
     // (i.e., loads).
     private Set<JCTree.JCExpression> lvalues = 
         new HashSet<JCTree.JCExpression>();
+    private final Instrumentor instrumentor;
     
     public InstrumentingTranslator(InstrumentingChecker checker,
                                    ProcessingEnvironment env,
-                                   TreePath p) {
+                                   TreePath p,
+                                   Instrumentor instrumentor) {
         super(checker, env, p);
+        this.instrumentor = instrumentor;
     }
     
     @Override
@@ -117,10 +121,22 @@ public class InstrumentingTranslator extends ReferencingTranslator {
         super.visitAssign(node);
     }
     
-    
     @Override
     public void visitAssignop(JCTree.JCAssignOp node) {
         lvalues.add(node.lhs);
         super.visitAssignop(node);
+    }
+    
+    @Override
+    public void visitTypeTest(JCTree.JCInstanceOf node) {
+        JCTree.JCExpression out = instrumentor.instInstanceOf(node);
+        attribute(out, node);
+        result = out;
+    }
+    @Override
+    public void visitTypeCast(JCTree.JCTypeCast node) {
+        JCTree.JCExpression out = instrumentor.instCast(node);
+        attribute(out, node);
+        result = out;
     }
 }

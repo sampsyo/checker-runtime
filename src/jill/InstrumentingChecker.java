@@ -36,6 +36,7 @@ import java.util.Map;
 public class InstrumentingChecker extends BaseTypeChecker {
     public static final String DEBUG_FLAG = "jilldbg";
     public boolean debug = false;
+    public Instrumentor instrumentor;
 
     // The -Ajilldbg flag prints out debugging information during source
     // translation.
@@ -44,6 +45,7 @@ public class InstrumentingChecker extends BaseTypeChecker {
         super.init(env);
         Map<String, String> opts = env.getOptions();
         debug = opts.containsKey(DEBUG_FLAG);
+        instrumentor = getInstrumentor();
     }
     
     @Override
@@ -58,12 +60,22 @@ public class InstrumentingChecker extends BaseTypeChecker {
         // Run the checker next and ensure everything worked out.
         super.typeProcess(e, p);
 
-        tree.accept(new InstrumentingTranslator(this, processingEnv, p));
+        InstrumentingTranslator translator = getTranslator(p);
+        instrumentor.beginInstrumentation(translator);
+        tree.accept(translator);
 		
         if (debug) {
             System.out.println("Translated to:");
             System.out.println(tree);
         }
+    }
+
+    public InstrumentingTranslator getTranslator(TreePath path) {
+        return new InstrumentingTranslator(this, processingEnv, path,
+                                           instrumentor);
+    }
+    public Instrumentor getInstrumentor() {
+        return new Instrumentor(debug);
     }
 }
 
