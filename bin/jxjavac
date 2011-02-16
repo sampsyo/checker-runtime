@@ -1,6 +1,12 @@
 #!/bin/sh
 
-jsr308c="javac -J-Xbootclasspath/p:$JSR308/checkers/binary/jsr308-all.jar"
+if [ $JAVA_HOME ]
+then
+    javac=$JAVA_HOME/bin/javac
+else
+    javac=javac
+fi
+jsr308c="$javac -J-Xbootclasspath/p:$JSR308/checkers/binary/jsr308-all.jar"
 
 jilldir=`dirname $0`/..
 jilljar=$jilldir/build/jill.jar
