@@ -1,8 +1,8 @@
 #!/bin/sh
 jsr308jar=$JSR308/checkers/binary/jsr308-all.jar
-jilldir=`dirname $0`/..
-jilljar=$jilldir/build/jill.jar
-jxjar=$jilldir/build/jillexample.jar
+cfrtdir=`dirname $0`/..
+cfrtjar=$cfrtdir/build/cfrt.jar
+exjar=$cfrtdir/build/jillexample.jar
 
-command="java -Xbootclasspath/a:$jsr308jar:$jilljar:$jxjar $*"
+command="java -Xbootclasspath/a:$jsr308jar:$cfrtjar:$exjar $*"
 exec $command

@@ -8,10 +8,11 @@ else
 fi
 jsr308c="$javac -J-Xbootclasspath/p:$JSR308/checkers/binary/jsr308-all.jar"
 
-jilldir=`dirname $0`/..
-jilljar=$jilldir/build/jill.jar
-jxjar=$jilldir/build/jillexample.jar
-jxchecker=jillexample.ExampleChecker
+cfrtdir=`dirname $0`/..
+cfrtjar=$cfrtdir/build/cfrt.jar
 
-command="$jsr308c -Xbootclasspath/a:$jilljar:$jxjar -processorpath $jilljar:$jxjar -processor $jxchecker $*"
+jxjar=$cfrtdir/build/jillexample.jar
+jxchecker=checkers.runtime.jillexample.ExampleChecker
+
+command="$jsr308c -Xbootclasspath/a:$cfrtjar:$jxjar -processorpath $cfrtjar:$jxjar -processor $jxchecker $*"
 exec $command

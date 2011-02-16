@@ -1,19 +1,22 @@
-<project name="jill" default="build">
+<project name="cf-rt" default="build">
     <property name="build.dir" value="build" />
     <property name="classes.dir" value="${build.dir}/classes" />
-    <property name="jill.jar" value="${build.dir}/jill.jar" />
-    <property name="src.dir" value="src" />
+    <property name="cfrt.jar" value="${build.dir}/cfrt.jar" />
+	<property name="src.dir" value="src" />
+	<property name="tests.dir" value="tests" />
     
     <!-- JSR308 support -->
     <property environment="env" />
     <property name="jsr308.dir" value="${env.JSR308}" />
     <property name="jsr308.bin" value="${jsr308.dir}/checkers/binary" />
     <property name="jsr308.jar" value="${jsr308.bin}/jsr308-all.jar" />
+	
     <presetdef name="jsr308.javac">
         <javac fork="yes">
             <compilerarg line="-J-Xbootclasspath/p:${jsr308.jar}" />
         </javac>
     </presetdef>
+	
     <presetdef name="jsr308.java">
         <java fork="yes">
             <jvmarg line="-Xbootclasspath/p:${jsr308.jar}" />
@@ -21,32 +24,34 @@
     </presetdef>
     
     <target name="build" depends="jar" />
+	
     <target name="compile">
         <mkdir dir="${classes.dir}" />
         <jsr308.javac
             srcdir="${src.dir}"
             destdir="${classes.dir}"
             classpath="${junit.jar}"
-            includes="jill/**"
+            includes="checkers/runtime/**"
             includeantruntime="false"
        />
     </target>
+	
     <target name="jar" depends="compile">
-        <jar destfile="${jill.jar}">
-            <fileset dir="${classes.dir}" includes="jill/**/*.class" />
+        <jar destfile="${cfrt.jar}">
+            <fileset dir="${classes.dir}" includes="checkers/runtime/**/*.class" />
         </jar>
     </target>
 
     <target name="example" depends="jar">
         <jsr308.javac
-            srcdir="${src.dir}"
+            srcdir="${tests.dir}"
             destdir="${classes.dir}"
-            classpath="${junit.jar}"
-            includes="jillexample/**"
+            classpath="${classes.dir}:${junit.jar}"
+            includes="checkers/runtime/jillexample/**"
             includeantruntime="false"
         />
         <jar destfile="${build.dir}/jillexample.jar">
-            <fileset dir="${classes.dir}" includes="jillexample/**/*.class" />
+            <fileset dir="${classes.dir}" includes="checkers/runtime/jillexample/**/*.class" />
         </jar>
     </target>
     
