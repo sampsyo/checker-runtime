@@ -2,8 +2,8 @@ package jillexample;
 
 import checkers.quals.TypeQualifiers;
 import checkers.quals.Unqualified;
+import checkers.runtime.InstrumentingChecker;
 
-import jill.InstrumentingChecker;
 
 @TypeQualifiers({Unqualified.class})
 public class ExampleChecker extends InstrumentingChecker {

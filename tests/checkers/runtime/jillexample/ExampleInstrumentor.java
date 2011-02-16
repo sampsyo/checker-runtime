@@ -1,6 +1,7 @@
 package jillexample;
 
-import jill.Instrumentor;
+
+import checkers.runtime.Instrumentor;
 
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
