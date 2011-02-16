@@ -27,7 +27,9 @@
             srcdir="${src.dir}"
             destdir="${classes.dir}"
             classpath="${junit.jar}"
-            includes="jill/**" />
+            includes="jill/**"
+            includeantruntime="false"
+       />
     </target>
     <target name="jar" depends="compile">
         <jar destfile="${jill.jar}">
@@ -40,7 +42,9 @@
             srcdir="${src.dir}"
             destdir="${classes.dir}"
             classpath="${junit.jar}"
-            includes="jillexample/**" />
+            includes="jillexample/**"
+            includeantruntime="false"
+        />
         <jar destfile="${build.dir}/jillexample.jar">
             <fileset dir="${classes.dir}" includes="jillexample/**/*.class" />
         </jar>
