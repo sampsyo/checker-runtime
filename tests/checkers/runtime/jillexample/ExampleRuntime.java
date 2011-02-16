@@ -1,4 +1,4 @@
-package jillexample;
+package checkers.runtime.jillexample;
 
 public class ExampleRuntime {
     public static Object didCast(Object value) {

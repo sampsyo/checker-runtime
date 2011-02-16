@@ -1,5 +1,4 @@
-package jillexample;
-
+package checkers.runtime.jillexample;
 
 import checkers.runtime.Instrumentor;
 
