@@ -1,7 +1,6 @@
 package jill.instrument;
 
 import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.util.Types;
 
 import checkers.basetype.BaseTypeChecker;
 import checkers.types.AnnotatedTypeFactory;
@@ -22,7 +21,6 @@ import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Log;
 import com.sun.tools.javac.util.Names;
-import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.tree.TreeCopier;
@@ -34,11 +32,9 @@ import java.util.Stack;
 import java.util.Map;
 import java.util.HashMap;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
-import jill.InstrumentingChecker;
 
 // A "helper" base class with convenient methods for AST generation
 // and manipulation. Its most important role is helping with "attribution,"
@@ -60,11 +56,11 @@ class HelpfulTreeTranslator extends TreeTranslator {
     protected AnnotatedTypeFactory atypeFactory;
     protected Symtab symtab;
     protected Log log;
-    
+
     // For getting attribution context.
     protected Stack<JCTree> visitingScopes = new Stack<JCTree>();
     private static final String STATIC_INIT_METH = "__htt_staticInitializerMethod";
-    
+
     protected HelpfulTreeTranslator(BaseTypeChecker c,
                                     ProcessingEnvironment env,
                                     TreePath p) {
@@ -86,7 +82,7 @@ class HelpfulTreeTranslator extends TreeTranslator {
 
 
     // AST generation helpers.
-    
+
     // Create an expression from a string consisting of "dot" accessess --
     // package/subpackage accesses, field accesses, etc.
     // For example: dotsExp("java.util.List")
@@ -99,24 +95,24 @@ class HelpfulTreeTranslator extends TreeTranslator {
         }
         return node;
     }
-    
+
     // Creates a "null" expression.
     protected JCTree.JCExpression nullExp() {
         return maker.Literal(TypeTags.BOT, null);
     }
-    
+
     // Creates an expression referencing "this" in the current class.
     protected JCTree.JCExpression thisExp() {
         return maker.This(
 		    ((JCTree)(TreeUtils.enclosingClass(path))).type
 		);
     }
-    
+
     // Boolean literals.
     protected JCTree.JCLiteral boolExp(boolean val) {
         return maker.Literal(TypeTags.BOOLEAN, val ? 1 : 0);
     }
-    
+
 
     // Attribution.
 
@@ -130,7 +126,7 @@ class HelpfulTreeTranslator extends TreeTranslator {
             new HashMap<JCTree.JCTypeCast, JCTree.JCNewClass>();
         private JCTree inLeaf = null;
         public JCTree outLeaf = null;
-        
+
         @Override
         public void visitNewClass(JCTree.JCNewClass node) {
             super.visitNewClass(node);
@@ -143,7 +139,7 @@ class HelpfulTreeTranslator extends TreeTranslator {
                 }
             }
         }
-        
+
         @Override
         public void visitTypeCast(JCTree.JCTypeCast node) {
             super.visitTypeCast(node);
@@ -151,7 +147,7 @@ class HelpfulTreeTranslator extends TreeTranslator {
                 result = replacements.get(node);
             }
         }
-        
+
         public JCTree remove(JCTree tree, JCTree leaf) {
             reverse = false;
             inLeaf = leaf;
@@ -159,14 +155,14 @@ class HelpfulTreeTranslator extends TreeTranslator {
             tree.accept(this);
             return result;
         }
-        
+
         public JCTree replace(JCTree tree) {
             reverse = true;
             tree.accept(this);
             return result;
         }
     }
-    
+
     // Gets the environment for attributing statements and expressions that are
     // generated. Pass this as an argument to one of the methods on the "attr"
     // object. The algorithm requires as an argument the new tree that will be
@@ -178,7 +174,7 @@ class HelpfulTreeTranslator extends TreeTranslator {
         JCTree.JCMethodDecl method = null;
         JCTree.JCBlock block = null;
         JCTree.JCForLoop loop = null;
-        
+
         for (JCTree tree : visitingScopes) {
             switch (tree.getKind()) {
             case CLASS:
@@ -202,27 +198,27 @@ class HelpfulTreeTranslator extends TreeTranslator {
                 break;
             }
         }
-        
+
         Env<AttrContext> env = enter.getClassEnv(class_.sym);
-        
+
         if (exMeth != null)
             method = exMeth;
         if (method != null)
             env = memberEnter.getMethodEnv(method, env);
-        
+
         if (loop != null) {
             env = attr.attribStatToTree(block, env, loop.init.last());
         }
-        
-        if (exBlock != null && block != null) {      
+
+        if (exBlock != null && block != null) {
             AnonymousClassRemover remover = new AnonymousClassRemover();
             remover.remove(block, exBlock);
-                  
+
             env = attr.attribStatToTree(block, env, remover.outLeaf);
-            
+
             remover.replace(block);
         }
-        
+
         if (exBlock != null)
             block = exBlock;
         if (block != null) {
@@ -231,23 +227,23 @@ class HelpfulTreeTranslator extends TreeTranslator {
             // even when *other* parts of the code are not yet valid.
             int oldErrors = log.nerrors;
             log.nerrors = log.MaxErrors;
-            
+
             AnonymousClassRemover remover = new AnonymousClassRemover();
             remover.remove(block, leaf);
-            
+
             env = attr.attribStatToTree(block, env, remover.outLeaf);
-            
+
             remover.replace(block);
-            
+
             log.nerrors = oldErrors;
         }
-        
+
         return env;
     }
     protected Env<AttrContext> getAttrEnv(JCTree leaf) {
         return getAttrEnv(leaf, null, null);
     }
-    
+
     // Uses reflection trickery to enter a new class member into the
     // symbol table.
     public void enterClassMember(JCTree.JCClassDecl class_, JCTree member) {
@@ -267,16 +263,16 @@ class HelpfulTreeTranslator extends TreeTranslator {
             System.out.println("*** reflection error!");
         }
     }
-    
+
     // Succinctly attribute expressions and statements.
-    public void attribute(JCTree.JCExpression expr, JCTree.JCExpression repl, Type type) {        
+    public void attribute(JCTree.JCExpression expr, JCTree.JCExpression repl, Type type) {
         AnonymousClassRemover remover = new AnonymousClassRemover();
         remover.remove(expr, null);
-            
+
         // System.out.println("attributing: " + expr);
         Type outType = attr.attribExpr(expr, getAttrEnv(repl), type);
         // System.out.println("   type: " + outType);
-        
+
         remover.replace(expr);
     }
     public void attribute(JCTree.JCExpression expr, JCTree.JCExpression repl) {
@@ -285,14 +281,14 @@ class HelpfulTreeTranslator extends TreeTranslator {
     public void attribute(JCTree.JCStatement stat, JCTree.JCStatement repl) {
         AnonymousClassRemover remover = new AnonymousClassRemover();
         remover.remove(stat, null);
-        
+
         // System.out.println("attributing: " + stat);
         attr.attribStat(stat, getAttrEnv(repl));
         // System.out.println("    attribution done.");
-        
+
         remover.replace(stat);
     }
-    
+
     public void attributeInBlock(JCTree.JCStatement stat,
                                  JCTree.JCBlock block) {
         attributeInMethod(stat, null, block);
@@ -302,12 +298,12 @@ class HelpfulTreeTranslator extends TreeTranslator {
                                   JCTree.JCBlock block) {
         AnonymousClassRemover remover = new AnonymousClassRemover();
         remover.remove(block, null);
-        
+
         attr.attribStat(stat, getAttrEnv(stat, meth, block));
-        
+
         remover.replace(block);
     }
-    
+
     // This is a huge, hacky workaround for dealing with attribution within static
     // initializers. Long story short, I've tried a *lot* of approaches to attributing
     // statements inside <clinit>s, but I haven't yet been able to come up with the
@@ -332,20 +328,20 @@ class HelpfulTreeTranslator extends TreeTranslator {
             }
         }
         if (!hasReplacementMethod && hasStaticInitializer) {
-        
+
             // Look for static initializer; move to static method.
             List<JCTree> outDefs = List.<JCTree>nil();
             for (JCTree def : class_.defs) {
                 if (def.getKind() == Kind.BLOCK) {
                     JCTree.JCBlock block = (JCTree.JCBlock)def;
-                    
+
                     if (!block.isStatic()) {
                     	continue;
                     }
-                
+
                     // Create a new static method with the block as its body.
                     TreeCopier<Void> copier = new TreeCopier<Void>(maker);
-                    block = (JCTree.JCBlock)copier.<JCTree.JCBlock>copy(block);
+                    block = copier.<JCTree.JCBlock>copy(block);
                     block.flags = block.flags & ~Flags.STATIC;
                     JCTree.JCMethodDecl initMeth = maker.MethodDef(
                         maker.Modifiers(Flags.PUBLIC | Flags.STATIC),
@@ -359,14 +355,14 @@ class HelpfulTreeTranslator extends TreeTranslator {
                     );
                     enterClassMember(class_, initMeth);
                     attr.attribStat(initMeth, enter.getClassEnv(class_.sym));
-                
+
                     outDefs = outDefs.append(initMeth);
-                
+
                 } else {
                     outDefs = outDefs.append(def);
                 }
             }
-            
+
             // Add a new static initializer that calls the method.
             JCTree.JCExpression invokeExpr = maker.Apply(
                 List.<JCTree.JCExpression>nil(),
@@ -376,17 +372,17 @@ class HelpfulTreeTranslator extends TreeTranslator {
             JCTree.JCStatement invokeStat = maker.Exec(invokeExpr);
             attr.attribStat(invokeStat, enter.getClassEnv(class_.sym));
             JCTree.JCBlock newIniter = maker.Block(
-                (long)Flags.STATIC,
+                Flags.STATIC,
                 List.of(invokeStat)
             );
             enterClassMember(class_, newIniter);
             outDefs = outDefs.append(newIniter);
-            
+
             class_.defs = outDefs;
-        
+
         }
     }
-    
+
     // Keeps track of the last visited method & class for the above
     // attribution helpers.
     @Override
@@ -399,7 +395,7 @@ class HelpfulTreeTranslator extends TreeTranslator {
     public void visitClassDef(JCTree.JCClassDecl node) {
         // Get rid of static initializers with local variables.
         replaceStaticInitializer(node);
-        
+
         visitingScopes.push(node);
         super.visitClassDef(node);
         visitingScopes.pop();

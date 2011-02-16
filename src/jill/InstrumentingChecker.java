@@ -2,13 +2,9 @@ package jill;
 
 import jill.instrument.*;
 import checkers.basetype.BaseTypeChecker;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import java.lang.annotation.RetentionPolicy;
 import javax.lang.model.element.TypeElement;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.tree.JCTree;
-import java.lang.annotation.ElementType;
 import javax.annotation.processing.ProcessingEnvironment;
 import java.util.Map;
 import java.util.Set;
@@ -45,11 +41,11 @@ public class InstrumentingChecker extends BaseTypeChecker {
         newOptions.add(DEBUG_FLAG);
         return newOptions;
     }
-    
+
     @Override
     public void typeProcess(TypeElement e, TreePath p) {
         JCTree tree = (JCTree) p.getCompilationUnit(); // or maybe p.getLeaf()?
-        
+
         if (debug) {
             System.out.println("Translating from:");
             System.out.println(tree);
@@ -61,7 +57,7 @@ public class InstrumentingChecker extends BaseTypeChecker {
         InstrumentingTranslator translator = getTranslator(p);
         instrumentor.beginInstrumentation(translator);
         tree.accept(translator);
-		
+
         if (debug) {
             System.out.println("Translated to:");
             System.out.println(tree);

@@ -1,24 +1,15 @@
 package jill.instrument;
 
-import com.sun.tools.javac.tree.TreeTranslator;
-import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.code.Kinds;
-import com.sun.tools.javac.code.Symbol;
-import javax.annotation.processing.ProcessingEnvironment;
-import com.sun.source.util.TreePath;
-import com.sun.source.tree.Tree.Kind;
-import com.sun.tools.javac.comp.Lower;
-import com.sun.tools.javac.code.TypeTags;
-import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.code.Flags;
-import com.sun.tools.javac.code.Symbol.ClassSymbol;
-import com.sun.tools.javac.util.Name;
-
-import com.sun.tools.javac.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
-import checkers.types.AnnotatedTypeMirror;
+import javax.annotation.processing.ProcessingEnvironment;
+
+import com.sun.source.util.TreePath;
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.code.TypeTags;
+import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.util.List;
 
 import jill.InstrumentingChecker;
 import jill.Instrumentor;
@@ -26,10 +17,10 @@ import jill.Instrumentor;
 public class InstrumentingTranslator extends ReferencingTranslator {
     // Keeps track of expressions that should *not* be instrumented as rvalues
     // (i.e., loads).
-    private Set<JCTree.JCExpression> lvalues = 
+    private Set<JCTree.JCExpression> lvalues =
         new HashSet<JCTree.JCExpression>();
     private final Instrumentor instrumentor;
-    
+
     public InstrumentingTranslator(InstrumentingChecker checker,
                                    ProcessingEnvironment env,
                                    TreePath p,
@@ -37,9 +28,9 @@ public class InstrumentingTranslator extends ReferencingTranslator {
         super(checker, env, p);
         this.instrumentor = instrumentor;
     }
-    
+
     @Override
-    public void visitCase(JCTree.JCCase node) {        
+    public void visitCase(JCTree.JCCase node) {
         // This is a little bit hacky, but mark "case" patterns as lvalues.
         // They are not, of course, actually lvalues, but they should not be
         // instrumented as loads because they must be constants at the source
@@ -49,7 +40,7 @@ public class InstrumentingTranslator extends ReferencingTranslator {
 
         super.visitCase(node);
     }
-    
+
     private JCTree.JCExpression boxedTypeExp(Type type, boolean abort) {
         String className;
         if (type.tag == TypeTags.BYTE)
@@ -107,26 +98,26 @@ public class InstrumentingTranslator extends ReferencingTranslator {
             methName = "booleanValue";
         else
             return boxed;
-        
+
         return maker.Apply(
             null,
             maker.Select(boxed, names.fromString(methName)),
             List.<JCTree.JCExpression>nil()
         );
     }
-    
+
     @Override
     public void visitAssign(JCTree.JCAssign node) {
         lvalues.add(node.lhs);
         super.visitAssign(node);
     }
-    
+
     @Override
     public void visitAssignop(JCTree.JCAssignOp node) {
         lvalues.add(node.lhs);
         super.visitAssignop(node);
     }
-    
+
     @Override
     public void visitTypeTest(JCTree.JCInstanceOf node) {
         JCTree.JCExpression out = instrumentor.instInstanceOf(node);
