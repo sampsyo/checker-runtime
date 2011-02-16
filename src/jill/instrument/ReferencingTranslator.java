@@ -77,7 +77,7 @@ public class ReferencingTranslator extends HelpfulTreeTranslator {
         JCTree.JCExpression newInit = maker.NewClass(
             null,
             List.of(boxedOldType),
-            dotsExp(REFERENCE_CLASS),
+            newType,
             List.<JCTree.JCExpression>of(
                 init,
                 boolExp(primitive)
