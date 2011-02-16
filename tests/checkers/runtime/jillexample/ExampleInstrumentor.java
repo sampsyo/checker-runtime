@@ -6,12 +6,14 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
 
 public class ExampleInstrumentor extends Instrumentor {
+    final static String rtclass = checkers.runtime.jillexample.ExampleRuntime.class.getName();
+
     @Override
     public JCTree.JCExpression instCast(JCTree.JCTypeCast cast) {
         JCTree.JCExpression call =
             translator.maker.Apply(
                 null,
-                translator.dotsExp("jillexample.ExampleRuntime.didCast"),
+                translator.dotsExp(rtclass + ".didCast"),
                 List.<JCTree.JCExpression>of(cast)
             );
         return call;
