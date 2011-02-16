@@ -1,6 +1,7 @@
-package jill;
+package checkers.runtime;
 
-import jill.instrument.*;
+import checkers.runtime.instrument.*;
+
 import com.sun.tools.javac.tree.JCTree;
 
 public class Instrumentor {

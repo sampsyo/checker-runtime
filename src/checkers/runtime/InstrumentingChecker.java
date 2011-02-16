@@ -1,7 +1,8 @@
-package jill;
+package checkers.runtime;
 
-import jill.instrument.*;
 import checkers.basetype.BaseTypeChecker;
+import checkers.runtime.instrument.*;
+
 import javax.lang.model.element.TypeElement;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.tree.JCTree;

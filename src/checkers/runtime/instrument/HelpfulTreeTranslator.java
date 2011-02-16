@@ -1,4 +1,4 @@
-package jill.instrument;
+package checkers.runtime.instrument;
 
 import javax.annotation.processing.ProcessingEnvironment;
 

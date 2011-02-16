@@ -1,9 +1,12 @@
-package jill.instrument;
+package checkers.runtime.instrument;
 
 import java.util.Set;
 import java.util.HashSet;
 
 import javax.annotation.processing.ProcessingEnvironment;
+
+import checkers.runtime.InstrumentingChecker;
+import checkers.runtime.Instrumentor;
 
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.tree.JCTree;
@@ -11,8 +14,6 @@ import com.sun.tools.javac.code.TypeTags;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.List;
 
-import jill.InstrumentingChecker;
-import jill.Instrumentor;
 
 public class InstrumentingTranslator extends ReferencingTranslator {
     // Keeps track of expressions that should *not* be instrumented as rvalues

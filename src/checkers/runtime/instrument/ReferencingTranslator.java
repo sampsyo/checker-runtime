@@ -1,6 +1,7 @@
-package jill.instrument;
+package checkers.runtime.instrument;
 
-import jill.InstrumentingChecker;
+import checkers.runtime.InstrumentingChecker;
+
 import com.sun.source.util.TreePath;
 import javax.annotation.processing.ProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
@@ -22,7 +23,7 @@ public class ReferencingTranslator extends HelpfulTreeTranslator {
         super(checker, env, p);
     }
 
-    protected static final String REFERENCE_CLASS = jill.rt.Reference.class.getName();
+    protected static final String REFERENCE_CLASS = checkers.runtime.rt.Reference.class.getName();
     protected static final String VALUE_FIELD = "value";
     protected static final String SYM_SUFFIX = "__REF__";
 
