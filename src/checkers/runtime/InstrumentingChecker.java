@@ -17,7 +17,9 @@ import java.util.HashSet;
  */
 public class InstrumentingChecker extends BaseTypeChecker {
     public static final String DEBUG_FLAG = "jilldbg";
+    public static final String VERBOSE_FLAG = "jillverb";
     public boolean debug = false;
+    public boolean verbose = false;
     public Instrumentor instrumentor;
 
     // The -Ajilldbg flag prints out debugging information during source
@@ -27,6 +29,7 @@ public class InstrumentingChecker extends BaseTypeChecker {
         super.init(env);
         Map<String, String> opts = env.getOptions();
         debug = opts.containsKey(DEBUG_FLAG);
+        verbose = opts.containsKey(VERBOSE_FLAG);
 
         instrumentor = getInstrumentor();
         instrumentor.debug = debug;
@@ -40,6 +43,7 @@ public class InstrumentingChecker extends BaseTypeChecker {
         Set<String> newOptions = new HashSet<String>();
         newOptions.addAll(oldOptions);
         newOptions.add(DEBUG_FLAG);
+        newOptions.add(VERBOSE_FLAG);
         return newOptions;
     }
 

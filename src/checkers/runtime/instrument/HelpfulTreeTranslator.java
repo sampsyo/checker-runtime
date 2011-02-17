@@ -1,5 +1,7 @@
 package checkers.runtime.instrument;
 
+import checkers.runtime.InstrumentingChecker;
+
 import javax.annotation.processing.ProcessingEnvironment;
 
 import checkers.basetype.BaseTypeChecker;
@@ -52,7 +54,7 @@ class HelpfulTreeTranslator extends TreeTranslator {
     protected Attr attr;
     protected javax.lang.model.util.Types typeutils;
     protected com.sun.tools.javac.code.Types jctypes;
-    protected BaseTypeChecker checker;
+    protected InstrumentingChecker checker;
     protected AnnotatedTypeFactory atypeFactory;
     protected Symtab symtab;
     protected Log log;
@@ -72,7 +74,7 @@ class HelpfulTreeTranslator extends TreeTranslator {
         memberEnter = MemberEnter.instance(context);
         attr = Attr.instance(context);
         path = p;
-        checker = c;
+        checker = (InstrumentingChecker)c;
         atypeFactory = c.createFactory(p.getCompilationUnit());
         typeutils = ((JavacProcessingEnvironment)env).getTypeUtils();
         jctypes = com.sun.tools.javac.code.Types.instance(context);
@@ -269,9 +271,11 @@ class HelpfulTreeTranslator extends TreeTranslator {
         AnonymousClassRemover remover = new AnonymousClassRemover();
         remover.remove(expr, null);
 
-        // System.out.println("attributing: " + expr);
+        if (checker.verbose)
+            System.out.println("attributing: " + expr);
         Type outType = attr.attribExpr(expr, getAttrEnv(repl), type);
-        // System.out.println("   type: " + outType);
+        if (checker.verbose)
+            System.out.println("   type: " + outType);
 
         remover.replace(expr);
     }
@@ -282,9 +286,11 @@ class HelpfulTreeTranslator extends TreeTranslator {
         AnonymousClassRemover remover = new AnonymousClassRemover();
         remover.remove(stat, null);
 
-        // System.out.println("attributing: " + stat);
+        if (checker.verbose)
+            System.out.println("attributing: " + stat);
         attr.attribStat(stat, getAttrEnv(repl));
-        // System.out.println("    attribution done.");
+        if (checker.verbose)
+            System.out.println("    attribution done.");
 
         remover.replace(stat);
     }
@@ -299,7 +305,11 @@ class HelpfulTreeTranslator extends TreeTranslator {
         AnonymousClassRemover remover = new AnonymousClassRemover();
         remover.remove(block, null);
 
+        if (checker.verbose)
+            System.out.println("attributing: " + stat);
         attr.attribStat(stat, getAttrEnv(stat, meth, block));
+        if (checker.verbose)
+            System.out.println("    attribution done.");
 
         remover.replace(block);
     }
