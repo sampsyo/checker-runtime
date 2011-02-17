@@ -107,6 +107,19 @@ public class InstrumentingTranslator extends ReferencingTranslator {
         );
     }
 
+    // Possibly add a cast to ensure that a replacement expression has the
+    // same type as the expression it replaces.
+    protected JCTree.JCExpression explicitType(JCTree.JCExpression expr,
+            JCTree.JCExpression oldExpr) {
+        Type type = oldExpr.type;
+        if (type == null) // Likely to be problematic...
+            return expr;
+        else if (type != expr.type) 
+            return maker.TypeCast(type, expr);
+        else
+            return expr;
+    }
+
     @Override
     public void visitAssign(JCTree.JCAssign node) {
         lvalues.add(node.lhs);
@@ -122,12 +135,14 @@ public class InstrumentingTranslator extends ReferencingTranslator {
     @Override
     public void visitTypeTest(JCTree.JCInstanceOf node) {
         JCTree.JCExpression out = instrumentor.instInstanceOf(node);
+        out = explicitType(out, node);
         attribute(out, node);
         result = out;
     }
     @Override
     public void visitTypeCast(JCTree.JCTypeCast node) {
         JCTree.JCExpression out = instrumentor.instCast(node);
+        out = explicitType(out, node);
         attribute(out, node);
         result = out;
     }
