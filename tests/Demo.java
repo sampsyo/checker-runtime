@@ -1,5 +1,3 @@
-package checkers.runtime.jillexample;
-
 public class Demo {
   static Object o = (String) "a String!";
 
