@@ -266,7 +266,7 @@ public class ReferencingTranslator extends HelpfulTreeTranslator {
         }
 
         // Insert replacement variable declaration *after* calls to super() or
-        // this() at the top of contructors.
+        // this() at the top of constructors.
         List<JCTree.JCStatement> insertLink = null;
         if (tree.sym.isConstructor() && tree.body != null &&
                 tree.body.stats != null && tree.body.stats.head != null &&
