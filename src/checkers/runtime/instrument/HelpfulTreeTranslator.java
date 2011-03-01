@@ -44,7 +44,7 @@ import java.lang.reflect.InvocationTargetException;
 // generated AST. This is necessary because our translators (importantly) run
 // after the automatic attribution occurs. The javac APIs for attribution are
 // limited and finnicky, though, so the process is quite fragile.
-class HelpfulTreeTranslator extends TreeTranslator {
+public class HelpfulTreeTranslator extends TreeTranslator {
     protected Context context;
     public TreeMaker maker;
     protected Names names;
@@ -63,7 +63,7 @@ class HelpfulTreeTranslator extends TreeTranslator {
     protected Stack<JCTree> visitingScopes = new Stack<JCTree>();
     private static final String STATIC_INIT_METH = "__htt_staticInitializerMethod";
 
-    protected HelpfulTreeTranslator(BaseTypeChecker c,
+    protected HelpfulTreeTranslator(InstrumentingChecker c,
                                     ProcessingEnvironment env,
                                     TreePath p) {
         super();
@@ -74,7 +74,7 @@ class HelpfulTreeTranslator extends TreeTranslator {
         memberEnter = MemberEnter.instance(context);
         attr = Attr.instance(context);
         path = p;
-        checker = (InstrumentingChecker)c;
+        checker = c;
         atypeFactory = c.createFactory(p.getCompilationUnit());
         typeutils = ((JavacProcessingEnvironment)env).getTypeUtils();
         jctypes = com.sun.tools.javac.code.Types.instance(context);
@@ -271,10 +271,10 @@ class HelpfulTreeTranslator extends TreeTranslator {
         AnonymousClassRemover remover = new AnonymousClassRemover();
         remover.remove(expr, null);
 
-        if (checker.verbose)
+        if (checker.verbose())
             System.out.println("attributing: " + expr);
         Type outType = attr.attribExpr(expr, getAttrEnv(repl), type);
-        if (checker.verbose)
+        if (checker.verbose())
             System.out.println("   type: " + outType);
 
         remover.replace(expr);
@@ -286,10 +286,10 @@ class HelpfulTreeTranslator extends TreeTranslator {
         AnonymousClassRemover remover = new AnonymousClassRemover();
         remover.remove(stat, null);
 
-        if (checker.verbose)
+        if (checker.verbose())
             System.out.println("attributing: " + stat);
         attr.attribStat(stat, getAttrEnv(repl));
-        if (checker.verbose)
+        if (checker.verbose())
             System.out.println("    attribution done.");
 
         remover.replace(stat);
@@ -305,10 +305,10 @@ class HelpfulTreeTranslator extends TreeTranslator {
         AnonymousClassRemover remover = new AnonymousClassRemover();
         remover.remove(block, null);
 
-        if (checker.verbose)
+        if (checker.verbose())
             System.out.println("attributing: " + stat);
         attr.attribStat(stat, getAttrEnv(stat, meth, block));
-        if (checker.verbose)
+        if (checker.verbose())
             System.out.println("    attribution done.");
 
         remover.replace(block);
