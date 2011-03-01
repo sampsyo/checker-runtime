@@ -50,7 +50,6 @@ public class ReferencingTranslator extends HelpfulTreeTranslator {
             return null;
 
         // Instead of declaring "T x", we declare "Reference<T> x__REF__".
-        JCTree.JCExpression oldType = tree.vartype;
         JCTree.JCExpression boxedOldType = tree.vartype;
         boolean primitive = false;
         if (tree.sym.type.isPrimitive()) {
@@ -75,21 +74,30 @@ public class ReferencingTranslator extends HelpfulTreeTranslator {
             init = maker.Ident(tree.name);
         else
             init = nullExp();
-        JCTree.JCExpression newInit = maker.NewClass(
-            null,
-            List.of(boxedOldType),
-            newType,
-            List.<JCTree.JCExpression>of(
-                init,
-                boolExp(primitive)
-            ),
-            null
-        );
+        JCTree.JCExpression newInit = createNewInitializer(tree, boxedOldType, newType, init, primitive);
         decl.init = newInit;
 
         //attribute(decl, tree); // Ensure that we enter the new variable.
         return decl;
     }
+
+    public JCTree.JCExpression createNewInitializer(JCTree.JCVariableDecl tree, JCTree.JCExpression boxedOldType,
+            JCTree.JCExpression newType, JCTree.JCExpression init, boolean primitive) {
+
+        JCTree.JCExpression newInit = maker.NewClass(
+                null,
+                List.of(boxedOldType),
+                newType,
+                List.<JCTree.JCExpression>of(
+                    init,
+                    boolExp(primitive)
+                ),
+                null
+            );
+        return newInit;
+    }
+
+
     private JCTree.JCVariableDecl replVarDef(JCTree.JCVariableDecl tree) {
         return replVarDef(tree, false);
     }
