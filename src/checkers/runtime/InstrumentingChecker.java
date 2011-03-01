@@ -18,8 +18,13 @@ import java.util.HashSet;
 public class InstrumentingChecker extends BaseTypeChecker {
     public static final String DEBUG_FLAG = "jilldbg";
     public static final String VERBOSE_FLAG = "jillverb";
-    public boolean debug = false;
-    public boolean verbose = false;
+
+    private boolean debug = false;
+    public boolean debug() { return debug; }
+
+    private boolean verbose = false;
+    public boolean verbose() { return verbose; }
+
     public Instrumentor instrumentor;
 
     // The -Ajilldbg flag prints out debugging information during source
@@ -51,6 +56,13 @@ public class InstrumentingChecker extends BaseTypeChecker {
     public void typeProcess(TypeElement e, TreePath p) {
         JCTree tree = (JCTree) p.getCompilationUnit(); // or maybe p.getLeaf()?
 
+        InstrumentingTranslator translator = getTranslator(p);
+
+        if (translator == null) {
+            super.typeProcess(e, p);
+            return;
+        }
+
         if (debug) {
             System.out.println("Translating from:");
             System.out.println(tree);
@@ -59,7 +71,6 @@ public class InstrumentingChecker extends BaseTypeChecker {
         // Run the checker next and ensure everything worked out.
         super.typeProcess(e, p);
 
-        InstrumentingTranslator translator = getTranslator(p);
         instrumentor.beginInstrumentation(translator);
         tree.accept(translator);
 
@@ -73,6 +84,7 @@ public class InstrumentingChecker extends BaseTypeChecker {
         return new InstrumentingTranslator(this, processingEnv, path,
                                            instrumentor);
     }
+
     public Instrumentor getInstrumentor() {
         return new Instrumentor();
     }
