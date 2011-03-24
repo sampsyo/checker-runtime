@@ -44,7 +44,7 @@ import java.lang.reflect.InvocationTargetException;
 // generated AST. This is necessary because our translators (importantly) run
 // after the automatic attribution occurs. The javac APIs for attribution are
 // limited and finnicky, though, so the process is quite fragile.
-public class HelpfulTreeTranslator extends TreeTranslator {
+public class HelpfulTreeTranslator<Checker extends InstrumentingChecker> extends TreeTranslator {
     protected Context context;
     public TreeMaker maker;
     protected Names names;
@@ -54,7 +54,7 @@ public class HelpfulTreeTranslator extends TreeTranslator {
     protected Attr attr;
     protected javax.lang.model.util.Types typeutils;
     protected com.sun.tools.javac.code.Types jctypes;
-    protected InstrumentingChecker checker;
+    protected Checker checker;
     protected AnnotatedTypeFactory atypeFactory;
     protected Symtab symtab;
     protected Log log;
@@ -63,7 +63,7 @@ public class HelpfulTreeTranslator extends TreeTranslator {
     protected Stack<JCTree> visitingScopes = new Stack<JCTree>();
     private static final String STATIC_INIT_METH = "__htt_staticInitializerMethod";
 
-    protected HelpfulTreeTranslator(InstrumentingChecker c,
+    protected HelpfulTreeTranslator(Checker c,
                                     ProcessingEnvironment env,
                                     TreePath p) {
         super();
