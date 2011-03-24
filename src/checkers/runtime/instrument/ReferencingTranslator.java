@@ -16,8 +16,8 @@ import java.util.HashSet;
 // variable references (and method parameters) with reference objects. This
 // allows us to simulate pass-by-reference for instrumentation of local variable
 // reads and writes.
-public class ReferencingTranslator extends HelpfulTreeTranslator {
-    public ReferencingTranslator(InstrumentingChecker checker,
+public class ReferencingTranslator<Checker extends InstrumentingChecker> extends HelpfulTreeTranslator<Checker> {
+    public ReferencingTranslator(Checker checker,
                                  ProcessingEnvironment env,
                                  TreePath p) {
         super(checker, env, p);

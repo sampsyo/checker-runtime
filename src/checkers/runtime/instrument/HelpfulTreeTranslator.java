@@ -4,7 +4,6 @@ import checkers.runtime.InstrumentingChecker;
 
 import javax.annotation.processing.ProcessingEnvironment;
 
-import checkers.basetype.BaseTypeChecker;
 import checkers.types.AnnotatedTypeFactory;
 import checkers.util.TreeUtils;
 
