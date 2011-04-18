@@ -292,7 +292,7 @@ public class ReferencingTranslator extends HelpfulTreeTranslator {
                         // constructor whose first line is a call to this or
                         // super. (This may be required at this step, but
                         // better safe than sorry.)
-                        insertLink = tree.body.stats.tail;
+                        insertLink = tree.body.stats;
                         constructorCalls.add(firstStat);
                     }
                 }
