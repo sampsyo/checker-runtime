@@ -23,7 +23,7 @@ public class ReferencingTranslator extends HelpfulTreeTranslator {
         super(checker, env, p);
     }
 
-    protected static final String REFERENCE_CLASS = checkers.runtime.rt.Reference.class.getName();
+    protected static String REFERENCE_CLASS = checkers.runtime.rt.Reference.class.getName();
     protected static final String VALUE_FIELD = "value";
     protected static final String SYM_SUFFIX = "__REF__";
 
