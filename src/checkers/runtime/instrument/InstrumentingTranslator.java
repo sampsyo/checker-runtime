@@ -15,14 +15,14 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.util.List;
 
 
-public class InstrumentingTranslator extends ReferencingTranslator {
+public class InstrumentingTranslator<Checker extends InstrumentingChecker> extends ReferencingTranslator<Checker> {
     // Keeps track of expressions that should *not* be instrumented as rvalues
     // (i.e., loads).
     private Set<JCTree.JCExpression> lvalues =
         new HashSet<JCTree.JCExpression>();
     private final Instrumentor instrumentor;
 
-    public InstrumentingTranslator(InstrumentingChecker checker,
+    public InstrumentingTranslator(Checker checker,
                                    ProcessingEnvironment env,
                                    TreePath p,
                                    Instrumentor instrumentor) {
@@ -67,9 +67,11 @@ public class InstrumentingTranslator extends ReferencingTranslator {
         		return maker.Type(type);
         return dotsExp("java.lang." + className);
     }
+
     private JCTree.JCExpression boxedTypeExp(Type type) {
     	return boxedTypeExp(type, false);
     }
+
     private JCTree.JCExpression box(JCTree.JCExpression unboxed) {
         JCTree.JCExpression castType = boxedTypeExp(unboxed.type, true);
         if (castType == null) {
@@ -79,6 +81,7 @@ public class InstrumentingTranslator extends ReferencingTranslator {
         // Perform cast.
         return maker.TypeCast(castType, unboxed);
     }
+
     private JCTree.JCExpression unbox(JCTree.JCExpression boxed, Type type) {
         String methName;
         if (type.tag == TypeTags.BYTE)
@@ -114,7 +117,7 @@ public class InstrumentingTranslator extends ReferencingTranslator {
         Type type = oldExpr.type;
         if (type == null) // Likely to be problematic...
             return expr;
-        else if (type != expr.type) 
+        else if (type != expr.type)
             return maker.TypeCast(type, expr);
         else
             return expr;
