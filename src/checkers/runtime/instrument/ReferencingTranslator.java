@@ -187,7 +187,7 @@ public class ReferencingTranslator<Checker extends InstrumentingChecker> extends
 
     @Override
     public void visitForeachLoop(JCTree.JCEnhancedForLoop tree) {
-        JCTree.JCStatement newStat = replVarDef(tree.var);
+        JCTree.JCStatement newStat = replVarDef(tree.var, true);
         if (newStat != null) {
             replDecls.add((JCTree.JCVariableDecl)newStat);
 
