@@ -1,15 +1,17 @@
 package checkers.runtime;
 
-import checkers.basetype.BaseTypeChecker;
-import checkers.runtime.instrument.*;
-
-import javax.lang.model.element.TypeElement;
-import com.sun.source.util.TreePath;
-import com.sun.tools.javac.tree.JCTree;
-import javax.annotation.processing.ProcessingEnvironment;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
+
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.TypeElement;
+
+import checkers.basetype.BaseTypeChecker;
+import checkers.runtime.instrument.InstrumentingTranslator;
+
+import com.sun.source.util.TreePath;
+import com.sun.tools.javac.tree.JCTree;
 
 /**
  * The checker class, which we here abuse to run our instrumentation code at the
@@ -30,7 +32,7 @@ public class InstrumentingChecker extends BaseTypeChecker {
     // The -Ajilldbg flag prints out debugging information during source
     // translation.
     @Override
-    public synchronized void init(ProcessingEnvironment env) {
+    public void initChecker(ProcessingEnvironment env) {
         super.init(env);
         Map<String, String> opts = env.getOptions();
         debug = opts.containsKey(DEBUG_FLAG);
