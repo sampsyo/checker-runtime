@@ -227,7 +227,7 @@ public class HelpfulTreeTranslator<Checker extends InstrumentingChecker> extends
             // generating the environment. This allows us to get the environment
             // even when *other* parts of the code are not yet valid.
             int oldErrors = log.nerrors;
-            log.nerrors = log.MaxErrors;
+            log.nerrors = 100; // MaxErrors now has protected access.
 
             AnonymousClassRemover remover = new AnonymousClassRemover();
             remover.remove(block, leaf);
