@@ -33,7 +33,7 @@ public class InstrumentingChecker extends BaseTypeChecker {
     // translation.
     @Override
     public void initChecker(ProcessingEnvironment env) {
-        super.init(env);
+        super.initChecker(env);
         Map<String, String> opts = env.getOptions();
         debug = opts.containsKey(DEBUG_FLAG);
         verbose = opts.containsKey(VERBOSE_FLAG);
