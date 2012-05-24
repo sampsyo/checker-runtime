@@ -265,6 +265,29 @@ public class HelpfulTreeTranslator<Checker extends InstrumentingChecker> extends
         }
     }
 
+    // More reflection trickery: get the type of an expression.
+    public Type typeForExpr(JCTree.JCExpression expr,
+                            Env<AttrContext> env) {
+        Method meth = null;
+        try {
+            meth = Attr.class.getDeclaredMethod("attribExpr", JCTree.class, Env.class);
+        } catch (NoSuchMethodException e) {
+            System.out.println("*** reflection error!");
+        }
+        meth.setAccessible(true);
+        Object[] args = {expr, env};
+        Object ret = null;
+        try {
+            ret = meth.invoke(attr, args);
+        } catch (IllegalAccessException e) {
+            System.out.println("*** reflection error!");
+        } catch (InvocationTargetException e) {
+            System.out.println("*** reflection error!");
+        }
+        return (Type)ret;
+    }
+
+
     // Succinctly attribute expressions and statements.
     public void attribute(JCTree.JCExpression expr, JCTree.JCExpression repl, Type type) {
         AnonymousClassRemover remover = new AnonymousClassRemover();
