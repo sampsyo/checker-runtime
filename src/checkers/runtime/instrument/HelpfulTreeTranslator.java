@@ -176,7 +176,11 @@ public class HelpfulTreeTranslator<Checker extends InstrumentingChecker> extends
         JCTree.JCBlock block = null;
         JCTree.JCForLoop loop = null;
 
+        // java.lang.Thread.dumpStack();
+        // System.out.println("env for " + leaf.getClass() + " " + leaf);
+
         for (JCTree tree : visitingScopes) {
+            // System.out.println(tree.getClass());
             switch (tree.getKind()) {
             case CLASS:
                 class_ = (JCTree.JCClassDecl)tree;
@@ -208,7 +212,14 @@ public class HelpfulTreeTranslator<Checker extends InstrumentingChecker> extends
             env = memberEnter.getMethodEnv(method, env);
 
         if (loop != null) {
-            env = attr.attribStatToTree(block, env, loop.init.last());
+            // EXPERIMENTAL (6/4/2012): Turning off this additional attribution
+            // step. Was causing problems with inner classes that are in the
+            // same scope as a for-loop; I think this was *mutating* the
+            // environment rather than just extending it locally.
+            // env = env.dup(class_, env.info.dup());
+            // System.out.println(env.info);
+            // env = attr.attribStatToTree(block, env, loop.init.last());
+            // System.out.println(env.info);
         }
 
         if (exBlock != null && block != null) {
@@ -233,6 +244,7 @@ public class HelpfulTreeTranslator<Checker extends InstrumentingChecker> extends
             remover.remove(block, leaf);
 
             env = attr.attribStatToTree(block, env, remover.outLeaf);
+            // System.out.println(env.info);
 
             remover.replace(block);
 
