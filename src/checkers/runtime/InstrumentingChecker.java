@@ -56,12 +56,14 @@ public class InstrumentingChecker extends BaseTypeChecker {
 
     @Override
     public void typeProcess(TypeElement e, TreePath p) {
+        // Run the SourceChecker base behavior *first* to set currentPath,
+        // which must be set before BasicAnnotatedTypeFactory is instantiated.
+        super.typeProcess(e, p);
+
         JCTree tree = (JCTree) p.getCompilationUnit(); // or maybe p.getLeaf()?
 
         InstrumentingTranslator translator = getTranslator(p);
-
         if (translator == null) {
-            super.typeProcess(e, p);
             return;
         }
 
@@ -69,9 +71,6 @@ public class InstrumentingChecker extends BaseTypeChecker {
             System.out.println("Translating from:");
             System.out.println(tree);
         }
-
-        // Run the checker next and ensure everything worked out.
-        super.typeProcess(e, p);
 
         instrumentor.beginInstrumentation(translator);
         tree.accept(translator);
