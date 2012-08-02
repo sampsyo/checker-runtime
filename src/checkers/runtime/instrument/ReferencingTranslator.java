@@ -7,6 +7,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Flags;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -261,6 +262,12 @@ public class ReferencingTranslator<Checker extends InstrumentingChecker> extends
             result = tree;
             return;
         }
+
+        // Remove "final" modifiers -- they were causing attribution problems
+        // and are irrelevant for __REF__ replacements anyway.
+        tree.mods.flags &= ~Flags.FINAL;
+        tree.sym.flags_field &= ~Flags.FINAL;
+
         super.visitVarDef(tree);
     }
 
