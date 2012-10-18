@@ -171,6 +171,7 @@ public class HelpfulTreeTranslator<Checker extends InstrumentingChecker> extends
     // Inspired by com.sun.tools.javac.api.JavacTrees.getAttrContext
     protected Env<AttrContext> getAttrEnv(JCTree leaf,
             JCTree.JCMethodDecl exMeth, JCTree.JCBlock exBlock) {
+        JCTree.JCCompilationUnit compunit = null;
         JCTree.JCClassDecl class_ = null;
         JCTree.JCMethodDecl method = null;
         JCTree.JCBlock block = null;
@@ -180,8 +181,14 @@ public class HelpfulTreeTranslator<Checker extends InstrumentingChecker> extends
         // System.out.println("env for " + leaf.getClass() + " " + leaf);
 
         for (JCTree tree : visitingScopes) {
-            // System.out.println(tree.getClass());
             switch (tree.getKind()) {
+            case COMPILATION_UNIT:
+                compunit = (JCTree.JCCompilationUnit)tree;
+                class_ = null;
+                method = null;
+                block = null;
+                loop = null;
+                break;
             case CLASS:
                 class_ = (JCTree.JCClassDecl)tree;
                 method = null;
@@ -204,7 +211,14 @@ public class HelpfulTreeTranslator<Checker extends InstrumentingChecker> extends
             }
         }
 
-        Env<AttrContext> env = enter.getClassEnv(class_.sym);
+        Env<AttrContext> env;
+        if (class_ != null) {
+            env = enter.getClassEnv(class_.sym);
+        } else {
+            // Code outside of any class (i.e., an initializer for a static
+            // field of an interface).
+            env = enter.getTopLevelEnv(compunit);
+        }
 
         if (exMeth != null)
             method = exMeth;
@@ -454,6 +468,12 @@ public class HelpfulTreeTranslator<Checker extends InstrumentingChecker> extends
     public void visitForLoop(JCTree.JCForLoop node) {
         visitingScopes.push(node);
         super.visitForLoop(node);
+        visitingScopes.pop();
+    }
+    @Override
+    public void visitTopLevel(JCTree.JCCompilationUnit node) {
+        visitingScopes.push(node);
+        super.visitTopLevel(node);
         visitingScopes.pop();
     }
 }
