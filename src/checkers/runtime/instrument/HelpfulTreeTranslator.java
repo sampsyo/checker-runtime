@@ -189,6 +189,7 @@ public class HelpfulTreeTranslator<Checker extends InstrumentingChecker> extends
                 block = null;
                 loop = null;
                 break;
+            case ENUM:
             case CLASS:
                 class_ = (JCTree.JCClassDecl)tree;
                 method = null;
