@@ -218,7 +218,7 @@ public class HelpfulTreeTranslator<Checker extends InstrumentingChecker> extends
         } else {
             // Code outside of any class (i.e., an initializer for a static
             // field of an interface).
-            env = enter.getTopLevelEnv(compunit);
+            env = enter.getTopLevelEnv((JCTree.JCCompilationUnit) path.getCompilationUnit());
         }
 
         if (exMeth != null)
